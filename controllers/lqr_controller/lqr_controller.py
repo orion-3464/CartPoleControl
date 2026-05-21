@@ -8,20 +8,25 @@ M = 0.135
 l = 0.25
 g = 9.81
 
+# LQR GAIN - THIS ONE WORKS. EXPERIMENT WITH IT
 K = [-10.0000, -8.3608, -32.6688, -5.4278]
-    
+
+# SWING-UP CONTROL PARAMETERS. EXPERIMENT WITH THOSE TOO
 k_e = 6.0    
 k_p = 0.8    
 k_d = 0.8    
 
 MAX_FORCE = 30.0
 
+# LOW-PASS DERIVATIVE FILTER CONSTANTS
 ALPHA_LQR = 0.30
 ALPHA_SWINGUP= 0.55
 
+#  ANGLES THAT DEFINE THE CONTROLLER IN USE
 THETA_CAPTURE = 0.45 
 THETA_ABANDON = 1.2
 
+# SIMULATION DURATION
 DURATION = 5.0
 
 def run_robot():
@@ -30,7 +35,6 @@ def run_robot():
     robot=Supervisor()
     dt=robot.getBasicTimeStep() / 1000.0
     timestep_ms=int(robot.getBasicTimeStep())
-
 
     cart_sensor=robot.getDevice("cart_sensor")
     cart_sensor.enable(timestep_ms)
@@ -53,20 +57,23 @@ def run_robot():
         t = robot.getTime()
         if t >=DURATION:
             break
-        x = cart_sensor.getValue()
 
+        x = cart_sensor.getValue()
         theta_raw = pole_sensor.getValue()
+        
         theta = math.remainder(theta_raw + math.pi, 2 * math.pi)
         angles.append(theta)
+        
         omega_raw = (theta_raw-theta_raw_prev)/dt
-
         v_raw = (x-x_prev)/dt
         
         if first_step:
             omega_filtered = omega_raw
             v_filtered = v_raw
             first_step = False
-        
+
+        # THIS IS THE LOW PASS FILTER
+        # YOU SHOULD REPLACE THIS WITH LUENBERG OBSERVER FOR A QUESTION
         if not lqr_active:
             alpha = ALPHA_SWINGUP
             if abs(theta) < THETA_CAPTURE:
@@ -80,7 +87,6 @@ def run_robot():
                 omega_filtered = omega_raw
                 v_filtered = v_raw
        
-
         omega_filtered = alpha*omega_filtered + (1.0-alpha)*omega_raw
         v_filtered = alpha * v_filtered + (1.0-alpha) * v_raw
 
@@ -107,11 +113,12 @@ def run_robot():
 
             u = mass_term + gravity_term + centrifugal_term
 
+        # CALMP INPUT TO AVOID TOO LARGE VALUES
         u_clamped = max(min(u, MAX_FORCE), -MAX_FORCE)
         cart_motor.setForce(u_clamped)
         
     robot.simulationSetMode(Supervisor.SIMULATION_MODE_PAUSE)
-    #robot.simulationSetMode(Supervisor.SIMULATION_MODE_RESET)
+    # SAVE DATA FOR PLOTTING
     angles = np.array(angles)
     np.save("../../results/angles.npy", angles)
 
