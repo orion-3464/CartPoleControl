@@ -1,0 +1,253 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/appearances/protos/Parquetry.proto"
+
+WorldInfo {
+  basicTimeStep 10
+}
+Viewpoint {
+  orientation -0.2204683636647386 0.2690033945326568 0.9375664639655689 1.6727588176877293
+  position 0.5338656351560234 -8.039654516409302 4.721842805925752
+}
+TexturedBackground {
+  texture "dusk"
+}
+TexturedBackgroundLight {
+}
+Floor {
+  appearance Parquetry {
+    type "light strip"
+  }
+}
+Solid {
+  children [
+    Group {
+      children [
+        Pose {
+          translation 3 0 0.39
+          children [
+            Shape {
+              appearance DEF LimitAppearence PBRAppearance {
+                baseColor 0.141176 0.121569 0.192157
+                roughness 1
+                metalness 0
+              }
+              geometry DEF LimitShape Box {
+                size 0.1 0.1 0.8
+              }
+              castShadows FALSE
+            }
+          ]
+        }
+        Pose {
+          translation -3 0 0.4
+          children [
+            Shape {
+              appearance USE LimitAppearence
+              geometry USE LimitShape
+              castShadows FALSE
+            }
+          ]
+        }
+        Pose {
+          translation 0 0 0.74
+          rotation 0 1 0 1.5708
+          children [
+            Shape {
+              appearance PBRAppearance {
+              }
+              geometry DEF BeamShape Cylinder {
+                height 6
+                radius 0.02
+              }
+              castShadows FALSE
+            }
+          ]
+        }
+      ]
+    }
+  ]
+  name "Rail"
+  boundingObject Group {
+    children [
+      Pose {
+        translation 3 0 0.39
+        children [
+          Shape {
+            geometry USE LimitShape
+          }
+        ]
+      }
+      Pose {
+        translation -3 0 0.4
+        children [
+          Shape {
+            geometry USE LimitShape
+          }
+        ]
+      }
+      Pose {
+        translation 2.35078e-06 0 0.74
+        rotation 0 1 0 1.5708
+        children [
+          Shape {
+            geometry USE BeamShape
+          }
+        ]
+      }
+    ]
+  }
+}
+Robot {
+  children [
+    SliderJoint {
+      jointParameters JointParameters {
+        axis 1 0 0
+        minStop -2.85
+        maxStop 2.85
+      }
+      device [
+        LinearMotor {
+          name "cart_motor"
+          minPosition -2.85
+          maxPosition 2.85
+          maxForce 30
+        }
+        PositionSensor {
+          name "cart_sensor"
+        }
+      ]
+      endPoint Solid {
+        rotation 1 0 0 0
+        children [
+          Group {
+            children [
+              Pose {
+                translation 0 0 0.74
+                children [
+                  Shape {
+                    appearance PBRAppearance {
+                      baseColor 0.960784 0.760784 0.0666667
+                      roughness 1
+                      metalness 0
+                    }
+                    geometry DEF CartShape Box {
+                      size 0.15 0.1 0.1
+                    }
+                    castShadows FALSE
+                  }
+                ]
+              }
+              Pose {
+                translation 0 -0.05 0.74
+                children [
+                  HingeJoint {
+                    jointParameters HingeJointParameters {
+                      axis 0 1 0
+                    }
+                    device [
+                      PositionSensor {
+                        name "pole_sensor"
+                        noise 0.01
+                      }
+                    ]
+                    endPoint Solid {
+                      rotation 0 1 0 0
+                      children [
+                        Pose {
+                          translation 0 -0.01 -0.125
+                          children [
+                            Shape {
+                              appearance PBRAppearance {
+                                baseColor 0.6 0.756863 0.945098
+                                roughness 1
+                                metalness 0
+                              }
+                              geometry DEF RodShape Cylinder {
+                                height 0.25
+                                radius 0.01
+                              }
+                              castShadows FALSE
+                            }
+                          ]
+                        }
+                        Pose {
+                          translation 0 -0.01 -0.275
+                          children [
+                            Shape {
+                              appearance PBRAppearance {
+                                baseColor 0.6 0.756863 0.945098
+                                roughness 1
+                                metalness 0
+                              }
+                              geometry DEF SphereShape Sphere {
+                                radius 0.03
+                              }
+                              castShadows FALSE
+                            }
+                          ]
+                        }
+                      ]
+                      name "Pole"
+                      boundingObject Group {
+                        children [
+                          Pose {
+                            translation 0 -0.01 -0.125
+                            children [
+                              USE RodShape
+                            ]
+                          }
+                          Pose {
+                            translation 0 -0.01 -0.275
+                            children [
+                              USE SphereShape
+                            ]
+                          }
+                        ]
+                      }
+                      physics Physics {
+                        density -1
+                        mass 0.2
+                        centerOfMass [
+                          0 -0.01 -0.1875
+                        ]
+                        inertiaMatrix [
+                          1e-05 0.0013 0.0013
+                          0 0 0
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+        boundingObject Pose {
+          translation 0 0 0.74
+          children [
+            USE CartShape
+          ]
+        }
+        physics Physics {
+          density -1
+          mass 0.135
+        }
+      }
+    }
+  ]
+  name "CartPole"
+  boundingObject Pose {
+    translation 0 0 0.74
+    children [
+      DEF CartShape Box {
+        size 0.15 0.1 0.1
+      }
+    ]
+  }
+  controller "lqr_controller"
+  supervisor TRUE
+}
