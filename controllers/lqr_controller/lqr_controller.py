@@ -23,11 +23,10 @@ THETA_CAPTURE = 0.45
 THETA_ABANDON = 1.2
 
 DURATION = 5.0
-times = []
 
 def run_robot():
     angles = []
-    
+    times = []
     robot=Supervisor()
     dt=robot.getBasicTimeStep() / 1000.0
     timestep_ms=int(robot.getBasicTimeStep())
@@ -114,7 +113,7 @@ def run_robot():
     robot.simulationSetMode(Supervisor.SIMULATION_MODE_PAUSE)
     #robot.simulationSetMode(Supervisor.SIMULATION_MODE_RESET)
     angles = np.array(angles)
-    np.save("angles.npy", angles)
+    np.save("../../results/angles.npy", angles)
 
 if __name__ == "__main__":
     run_robot()

@@ -9,8 +9,8 @@ WorldInfo {
   basicTimeStep 10
 }
 Viewpoint {
-  orientation -0.2204683636647386 0.2690033945326568 0.9375664639655689 1.6727588176877293
-  position 0.5338656351560234 -8.039654516409302 4.721842805925752
+  orientation -0.1435918645681081 0.1443116247910071 0.9790584923180197 1.586959493381045
+  position -0.07431722310343272 -7.835212782944261 2.4811996777650034
 }
 TexturedBackground {
   texture "dusk"
@@ -151,7 +151,6 @@ Robot {
                     device [
                       PositionSensor {
                         name "pole_sensor"
-                        noise 0.01
                       }
                     ]
                     endPoint Solid {
