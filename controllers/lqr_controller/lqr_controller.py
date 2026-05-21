@@ -73,7 +73,7 @@ def run_robot():
             first_step = False
 
         # THIS IS THE LOW PASS FILTER
-        # YOU SHOULD REPLACE THIS WITH LUENBERG OBSERVER FOR A QUESTION
+        # YOU SHOULD REPLACE THIS WITH LUENBERGER OBSERVER FOR A QUESTION
         if not lqr_active:
             alpha = ALPHA_SWINGUP
             if abs(theta) < THETA_CAPTURE:
@@ -113,7 +113,7 @@ def run_robot():
 
             u = mass_term + gravity_term + centrifugal_term
 
-        # CALMP INPUT TO AVOID TOO LARGE VALUES
+        # CLAMP INPUT TO AVOID TOO LARGE VALUES
         u_clamped = max(min(u, MAX_FORCE), -MAX_FORCE)
         cart_motor.setForce(u_clamped)
         
